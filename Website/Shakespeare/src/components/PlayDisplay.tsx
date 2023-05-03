@@ -2,37 +2,28 @@ import { Component, For, createEffect, createSignal } from "solid-js";
 import { ShakespeareEntry, ShakespearePlay } from "../types";
 import Card from "./Card";
 import Pagination from "./Pagination";
-import shakespeareController from "../core/shakespeare/shakespeareController";
 
 interface Props {
-  play: ShakespearePlay;
-  actNumber: number;
-  sceneNumber: number;
+  selectedPlay: ShakespearePlay;
+  selectedAct: number;
+  selectedScene: number;
+  currentEntries: ShakespeareEntry[];
   onSceneChange: (sceneNumber: number) => void;
 }
 
 const PlayDisplay: Component<Props> = (props: Props) => {
-  const [entriesInAct, setEntriesInAct] = createSignal<ShakespeareEntry[]>([]);
   const [entriesPerScene, setEntriesPerScene] = createSignal<
     ShakespeareEntry[][]
   >([]);
 
   createEffect(() => {
-    if (!props.play || !props.actNumber) return;
+    if (!props.selectedPlay || !props.selectedAct) return;
 
-    shakespeareController
-      .getActOfPlay({
-        playName: props.play.playName,
-        actNumber: props.actNumber,
-      })
-      .then((response) => {
-        setEntriesInAct(response);
-        setEntriesPerScene(createPagination);
-      });
+    setEntriesPerScene(createPagination(props.currentEntries));
   });
 
-  const createPagination = () =>
-    entriesInAct().reduce((acc, entry) => {
+  const createPagination = (entries: ShakespeareEntry[]) =>
+    entries.reduce((acc, entry) => {
       const lastIndex = acc.length - 1;
 
       if (entry.type === "scene") {
@@ -54,14 +45,14 @@ const PlayDisplay: Component<Props> = (props: Props) => {
     <div class="flex flex-col h-full">
       <Card
         class={`overflow-y-auto w-full ${
-          props.sceneNumber == 1 ? "text-center" : ""
+          props.selectedScene == 1 ? "text-center" : ""
         }`}
       >
-        {(!props.play || entriesPerScene().length == 0) && (
+        {(!props.selectedPlay || entriesPerScene().length == 0) && (
           <div class="full text-center font-semibold">Please select a play</div>
         )}
 
-        <For each={entriesPerScene()[props.sceneNumber - 1]}>
+        <For each={entriesPerScene()[props.selectedScene - 1]}>
           {(entry) => {
             return (
               <div
@@ -100,7 +91,7 @@ const PlayDisplay: Component<Props> = (props: Props) => {
       </Card>
 
       <Pagination
-        currentPage={props.sceneNumber}
+        currentPage={props.selectedScene}
         totalPages={entriesPerScene().length}
         onChangePage={onChangePage}
       ></Pagination>

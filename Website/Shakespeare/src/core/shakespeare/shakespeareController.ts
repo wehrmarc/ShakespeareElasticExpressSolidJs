@@ -1,4 +1,9 @@
-import { ShakespearePlay, ShakespeareEntry, ShakespeareSearchResult } from "../../types";
+import {
+  ShakespearePlay,
+  ShakespeareEntry,
+  ShakespeareSearchResult,
+  ShakespeareSearchResultFull,
+} from "../../types";
 import { EndpointService } from "../api/endpoint.service";
 
 const api = new EndpointService("http://localhost:4000");
@@ -24,9 +29,17 @@ async function search(term: string): Promise<ShakespeareSearchResult[]> {
   return await api.get(`shakespeare?search=${term}`);
 }
 
+async function getSearchResults(requestObj: {
+  playName: string;
+  lineId: number;
+}): Promise<ShakespeareSearchResultFull> {
+  return await api.post("shakespeare", requestObj);
+}
+
 export default {
   getListOfPlays,
   getPlay,
   getActOfPlay,
   search,
+  getSearchResults,
 };

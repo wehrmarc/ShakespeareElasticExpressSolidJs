@@ -3,25 +3,26 @@ import { ShakespearePlay } from "../types"; // replace this with your own type d
 
 interface Props {
   plays: ShakespearePlay[];
-  onSelect: (play: ShakespearePlay, actNumber: number) => void;
+  selectedPlay: ShakespearePlay,
+  selectedAct: number,
+  onSelectPlay: (play: ShakespearePlay) => void,
+  onSelectAct: (actNumber: number) => void;
 }
 
 const PlayList: Component<Props> = (props: Props) => {
-  const [selectedPlay, setSelectedPlay] = createSignal<ShakespearePlay>();
-  const [selectedAct, setSelectedAct] = createSignal<number>();
 
-  const handleSelectPlay = (play: ShakespearePlay) => {
-    if (play !== selectedPlay()) {
-      setSelectedAct(0);
-    }
+  // const handleSelectPlay = (play: ShakespearePlay) => {
+  //   if (play !== selectedPlay()) {
+  //     setSelectedAct(0);
+  //   }
 
-    setSelectedPlay(play);
-  };
+  //   setSelectedPlay(play);
+  // };
 
-  const handleSelectAct = (actNumber: number) => {
-    setSelectedAct(actNumber);
-    props.onSelect(selectedPlay(), actNumber);
-  };
+  // const handleSelectAct = (actNumber: number) => {
+  //   setSelectedAct(actNumber);
+  //   props.onSelect(selectedPlay(), actNumber);
+  // };
 
   return (
     <div class="flex flex-col items-center h-full">
@@ -29,10 +30,10 @@ const PlayList: Component<Props> = (props: Props) => {
       <ul class="list-disc overflow-y-auto w-full">
         <For each={props.plays}>
           {(play) => (
-            <li onClick={() => handleSelectPlay(play)}>
+            <li onClick={() => props.onSelectPlay(play)}>
               <span
                 class={`cursor-pointer hover:text-blue-500 ${
-                  selectedPlay() === play ? "text-blue-500" : ""
+                  props.selectedPlay === play ? "text-blue-500" : ""
                 }`}
               >
                 <p class="font-semibold">{play.playName}</p>
@@ -40,16 +41,16 @@ const PlayList: Component<Props> = (props: Props) => {
                 <p>Lines: {play.lineCount}</p>
               </span>
 
-              {selectedPlay() === play && (
+              {props.selectedPlay === play && (
                 <For each={Array.from({ length: play.actCount })}>
                   {(act, index) => (
                     <li
                       class={`ml-6 cursor-pointer hover:text-blue-500 ${
-                        selectedPlay() === play && selectedAct() === index() + 1
+                        props.selectedPlay === play && props.selectedAct === index() + 1
                           ? "text-blue-500"
                           : ""
                       }`}
-                      onClick={() => handleSelectAct(index() + 1)}
+                      onClick={() => props.onSelectAct(index() + 1)}
                     >
                       Act {index() + 1}
                     </li>

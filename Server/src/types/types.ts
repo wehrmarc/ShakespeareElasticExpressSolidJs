@@ -1,3 +1,5 @@
+import exp from "constants";
+
 export interface ITest {
   name: string;
   description: string;
@@ -25,6 +27,13 @@ export interface ShakespeareSearchResult {
   highlight: {
     textEntry: []
   }
+}
+
+export interface ShakespeareSearchResultFull {
+  sceneNumber: number,
+  actNumber: number,
+  playName: string,
+  entries: ShakespeareEntry[]
 }
 
 export interface ShardsResponse {

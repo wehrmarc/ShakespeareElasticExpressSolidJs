@@ -22,3 +22,9 @@ export interface ShakespearePlay {
     }
   }
   
+  export interface ShakespeareSearchResultFull {
+    sceneNumber: number,
+    actNumber: number,
+    playName: string,
+    entries: ShakespeareEntry[]
+  }
